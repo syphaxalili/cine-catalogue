@@ -1,0 +1,31 @@
+{% extends "films/base.html" %}
+
+{% block titre %}{{ realisateur }} — Ciné-Catalogue{% endblock %}
+
+{% block contenu %}
+    <p class="meta"><a href="{% url 'films:liste_films' %}">← Retour au catalogue</a></p>
+
+    <h2>{{ realisateur }}</h2>
+    <p class="meta">
+        {{ realisateur.nationalite|default:"Nationalité inconnue" }}
+        {% if realisateur.date_naissance %} · né(e) le {{ realisateur.date_naissance|date:"d/m/Y" }}{% endif %}
+        · {{ realisateur.nombre_de_films }} film{{ realisateur.nombre_de_films|pluralize }}
+    </p>
+
+    <h3>Filmographie</h3>
+    <div class="grille">
+        {% for film in films %}
+            <article class="carte">
+                <h3><a href="{% url 'films:detail_film' film.pk %}">{{ film.titre }}</a></h3>
+                <p class="meta">{{ film.annee_sortie }} · {{ film.duree_lisible }}</p>
+                <p><span class="badge">{{ film.get_genre_display }}</span></p>
+            </article>
+        {% empty %}
+            <p class="vide">Aucun film enregistré pour ce réalisateur.</p>
+        {% endfor %}
+    </div>
+
+    <p class="meta" style="margin-top:2rem;">
+        Cette fiche en JSON : <a href="/api/realisateurs/{{ realisateur.pk }}/">/api/realisateurs/{{ realisateur.pk }}/</a>
+    </p>
+{% endblock %}

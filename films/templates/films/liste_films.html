@@ -1,0 +1,46 @@
+{% extends "films/base.html" %}
+
+{% comment %}
+    La vue `liste_films` (films/views.py) nous transmet un dictionnaire :
+    films, genres, genre_choisi, recherche, total.
+    On y accède ici directement par leur nom, sans les {{ }} du Python.
+{% endcomment %}
+
+{% block titre %}Catalogue — Ciné-Catalogue{% endblock %}
+
+{% block contenu %}
+    <h2>Catalogue ({{ total }} film{{ total|pluralize }})</h2>
+
+    {# Formulaire en GET : les champs se retrouvent dans l'URL (?recherche=...&genre=...) #}
+    <form class="filtres" method="get">
+        <input type="search" name="recherche" placeholder="Rechercher un titre…" value="{{ recherche }}">
+        <select name="genre">
+            <option value="">Tous les genres</option>
+            {% for code, libelle in genres %}
+                {# `if` pour garder l'option sélectionnée après rechargement de la page #}
+                <option value="{{ code }}" {% if code == genre_choisi %}selected{% endif %}>{{ libelle }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrer</button>
+        <a href="{% url 'films:liste_films' %}" style="align-self:center;">Réinitialiser</a>
+    </form>
+
+    <div class="grille">
+        {% for film in films %}
+            <article class="carte">
+                <h3><a href="{% url 'films:detail_film' film.pk %}">{{ film.titre }}</a></h3>
+                <p class="meta">
+                    {{ film.annee_sortie }} · {{ film.duree_lisible }} ·
+                    <a href="{% url 'films:detail_realisateur' film.realisateur.pk %}">{{ film.realisateur }}</a>
+                </p>
+                <p>
+                    <span class="badge">{{ film.get_genre_display }}</span>
+                    {% if film.note %}<span class="note">★ {{ film.note }}/10</span>{% endif %}
+                </p>
+            </article>
+        {% empty %}
+            {# `empty` s'affiche quand la boucle ne contient aucun élément #}
+            <p class="vide">Aucun film ne correspond à cette recherche.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

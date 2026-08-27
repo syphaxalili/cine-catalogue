@@ -1,0 +1,54 @@
+{% extends "films/base.html" %}
+
+{% block titre %}{{ film.titre }} — Ciné-Catalogue{% endblock %}
+
+{% block contenu %}
+    <p class="meta"><a href="{% url 'films:liste_films' %}">← Retour au catalogue</a></p>
+
+    <h2>{{ film.titre }} <span class="meta">({{ film.annee_sortie }})</span></h2>
+
+    <p>
+        <span class="badge">{{ film.get_genre_display }}</span>
+        {% if film.est_recent %}<span class="badge">Récent</span>{% endif %}
+        {% if film.note %}<span class="note">★ {{ film.note }}/10</span>{% endif %}
+    </p>
+
+    <div class="carte">
+        <table>
+            <tr>
+                <th>Réalisateur</th>
+                <td><a href="{% url 'films:detail_realisateur' film.realisateur.pk %}">{{ film.realisateur }}</a></td>
+            </tr>
+            <tr><th>Durée</th><td>{{ film.duree_lisible }}</td></tr>
+            <tr><th>Genre</th><td>{{ film.get_genre_display }}</td></tr>
+            {# `default` affiche une valeur de repli quand le champ est vide #}
+            <tr><th>Note</th><td>{{ film.note|default:"non notée" }}</td></tr>
+            {# `date:"..."` formate une date/heure côté template #}
+            <tr><th>Ajouté le</th><td>{{ film.date_ajout|date:"d/m/Y à H:i" }}</td></tr>
+        </table>
+    </div>
+
+    <h3>Synopsis</h3>
+    {% if film.synopsis %}
+        {# `linebreaks` transforme les retours à la ligne du TextField en <p> HTML #}
+        <div>{{ film.synopsis|linebreaks }}</div>
+    {% else %}
+        <p class="meta">Pas encore de synopsis.</p>
+    {% endif %}
+
+    {% if autres_films %}
+        <h3>Du même réalisateur</h3>
+        <div class="grille">
+            {% for autre in autres_films %}
+                <article class="carte">
+                    <h3><a href="{% url 'films:detail_film' autre.pk %}">{{ autre.titre }}</a></h3>
+                    <p class="meta">{{ autre.annee_sortie }} · {{ autre.duree_lisible }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <p class="meta" style="margin-top:2rem;">
+        Ce film en JSON : <a href="/api/films/{{ film.pk }}/">/api/films/{{ film.pk }}/</a>
+    </p>
+{% endblock %}

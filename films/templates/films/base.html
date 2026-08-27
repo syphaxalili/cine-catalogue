@@ -1,0 +1,111 @@
+{% comment %}
+    TEMPLATE DE BASE — le squelette commun à toutes les pages.
+
+    Les autres templates écrivent {% extends "films/base.html" %} puis
+    remplissent uniquement les « blocs » définis ici ({% block contenu %}).
+    C'est l'héritage de templates : on n'écrit le <head>, le menu et le
+    pied de page qu'une seule fois.
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titre %}Ciné-Catalogue{% endblock %}</title>
+    <style>
+        :root {
+            --fond: #12131a;
+            --carte: #1c1e29;
+            --bordure: #2c2f3f;
+            --texte: #e8e9f0;
+            --secondaire: #9aa0b5;
+            --accent: #ffc857;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            background: var(--fond);
+            color: var(--texte);
+            line-height: 1.6;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        header {
+            border-bottom: 1px solid var(--bordure);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        header h1 { font-size: 1.25rem; margin: 0; letter-spacing: -0.02em; }
+        header nav a { margin-left: 1.25rem; font-size: 0.9rem; color: var(--secondaire); }
+        main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        h2 { letter-spacing: -0.02em; }
+        .filtres {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--carte);
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+        }
+        input, select, button {
+            font: inherit;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--bordure);
+            background: var(--fond);
+            color: var(--texte);
+        }
+        button { background: var(--accent); color: #12131a; font-weight: 600; cursor: pointer; border: none; }
+        .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+        .carte {
+            background: var(--carte);
+            border: 1px solid var(--bordure);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+        }
+        .carte h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+        .meta { color: var(--secondaire); font-size: 0.85rem; }
+        .badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid var(--bordure);
+            color: var(--secondaire);
+        }
+        .note { color: var(--accent); font-weight: 600; }
+        .vide { color: var(--secondaire); text-align: center; padding: 3rem 0; }
+        footer { border-top: 1px solid var(--bordure); padding: 1.5rem 2rem; color: var(--secondaire); font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { text-align: left; padding: 0.5rem 0; border-bottom: 1px solid var(--bordure); }
+    </style>
+</head>
+<body>
+    <header>
+        {# {% url %} construit l'URL à partir du NOM de la route (films/urls_web.py). #}
+        <h1><a href="{% url 'films:liste_films' %}">🎬 Ciné-Catalogue</a></h1>
+        <nav>
+            <a href="{% url 'films:liste_films' %}">Catalogue</a>
+            <a href="/api/">API REST</a>
+            <a href="/admin/">Administration</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block contenu %}{% endblock %}
+    </main>
+
+    <footer>
+        Projet Django + DRF — pages HTML servies par des templates Django, données exposées en JSON sur /api/.
+    </footer>
+</body>
+</html>
